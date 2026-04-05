@@ -11,33 +11,30 @@
     body { font-family: 'Inter', system-ui, sans-serif; }
     .yard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
     .container-box { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .container-box:hover { transform: scale(1.08); box-shadow: 0 0 20px rgb(34 211 238); }
-    .modal { animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .container-box:hover { transform: scale(1.1); box-shadow: 0 0 25px rgb(34 211 238); }
+    .modal { animation: modalPop 0.3s ease; }
+    @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen">
 
-  <!-- LOGIN (giữ nguyên) -->
+  <!-- LOGIN -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-950 via-cyan-950 to-teal-950">
-    <div class="bg-white/10 backdrop-blur-2xl p-10 rounded-3xl shadow-2xl w-full max-w-md border border-cyan-400/30">
-      <div class="flex flex-col items-center mb-10">
+    <div class="bg-white/10 backdrop-blur-2xl p-10 rounded-3xl w-full max-w-md border border-cyan-400/30">
+      <div class="text-center mb-10">
         <i class="fa fa-ship text-7xl text-cyan-400 mb-6"></i>
-        <h1 class="text-4xl font-bold tracking-tight">TOS Cảng Container</h1>
-        <p class="text-cyan-300 mt-2">Terminal Operating System v2.1</p>
+        <h1 class="text-4xl font-bold">TOS Cảng Container</h1>
+        <p class="text-cyan-300">Terminal Operating System v2.2</p>
       </div>
-      <div class="space-y-5">
-        <input id="username" type="text" value="admin" placeholder="Tên đăng nhập" class="w-full px-6 py-4 bg-white/10 border border-cyan-400/30 rounded-2xl focus:outline-none focus:border-cyan-400">
-        <input id="password" type="password" value="123456" placeholder="Mật khẩu" class="w-full px-6 py-4 bg-white/10 border border-cyan-400/30 rounded-2xl focus:outline-none focus:border-cyan-400">
-        <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 rounded-2xl font-semibold text-lg transition-all">ĐĂNG NHẬP</button>
-      </div>
+      <input id="username" type="text" value="admin" class="w-full px-6 py-4 bg-white/10 border border-cyan-400/30 rounded-2xl mb-4 focus:border-cyan-400">
+      <input id="password" type="password" value="123456" class="w-full px-6 py-4 bg-white/10 border border-cyan-400/30 rounded-2xl mb-6 focus:border-cyan-400">
+      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-2xl font-semibold text-lg">ĐĂNG NHẬP</button>
     </div>
   </div>
 
   <!-- MAIN APP -->
   <div id="mainApp" class="hidden flex min-h-screen">
-
-    <!-- SIDEBAR (giữ nguyên) -->
+    <!-- SIDEBAR -->
     <div class="w-72 bg-gray-900 border-r border-cyan-400/20 flex flex-col">
       <div class="p-6 border-b border-cyan-400/20 flex items-center gap-4">
         <i class="fa fa-ship text-4xl text-cyan-400"></i>
@@ -49,12 +46,12 @@
       <nav class="flex-1 p-4 overflow-auto" id="sidebarNav"></nav>
       <div class="p-6 border-t border-cyan-400/20">
         <div class="flex items-center gap-3 bg-white/5 p-4 rounded-3xl">
-          <i class="fa fa-user-circle text-4xl text-cyan-300"></i>
-          <div class="flex-1">
+          <i class="fa fa-user-circle text-4xl"></i>
+          <div>
             <p id="userName" class="font-medium">Nguyễn Văn A</p>
             <p id="currentRole" class="text-xs text-emerald-400">Quản trị viên</p>
           </div>
-          <button onclick="logout()" class="text-red-400 hover:text-red-500"><i class="fa fa-sign-out-alt"></i></button>
+          <button onclick="logout()" class="text-red-400"><i class="fa fa-sign-out-alt"></i></button>
         </div>
       </div>
     </div>
@@ -63,17 +60,15 @@
     <div class="flex-1 flex flex-col">
       <div class="h-16 bg-gray-900 border-b border-cyan-400/20 px-8 flex items-center justify-between">
         <h2 id="pageTitle" class="text-3xl font-semibold">Dashboard</h2>
-        <div id="realTimeBar" class="flex items-center gap-3 text-sm text-emerald-400"></div>
+        <div id="realTimeBar" class="text-emerald-400 text-sm flex items-center gap-3"></div>
       </div>
       <div class="flex-1 overflow-auto p-8" id="contentArea"></div>
     </div>
   </div>
 
   <!-- MODAL -->
-  <div id="modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div class="bg-gray-900 w-full max-w-lg rounded-3xl p-8 modal">
-      <div id="modalContent"></div>
-    </div>
+  <div id="modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div id="modalContent" class="bg-gray-900 w-full max-w-lg rounded-3xl p-8 modal"></div>
   </div>
 
   <script>
@@ -94,12 +89,11 @@
     ]
 
     function renderSidebar() {
-      const nav = document.getElementById("sidebarNav")
-      nav.innerHTML = menuItems.map(item => `
-        <a onclick="switchPage('${item.id}')" class="flex items-center gap-4 px-6 py-4 hover:bg-white/10 rounded-2xl transition-all cursor-pointer group">
+      document.getElementById("sidebarNav").innerHTML = menuItems.map(item => `
+        <a onclick="switchPage('${item.id}')" class="flex items-center gap-4 px-6 py-4 hover:bg-white/10 rounded-2xl cursor-pointer">
           <i class="fa ${item.icon} text-xl w-6"></i>
-          <span class="font-medium">${item.name}</span>
-          <span class="ml-auto text-xs bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded-full">${item.fr}</span>
+          <span>${item.name}</span>
+          <span class="ml-auto text-xs bg-cyan-900 px-2 py-1 rounded-full">${item.fr}</span>
         </a>
       `).join('')
     }
@@ -117,13 +111,13 @@
       document.getElementById("loginScreen").classList.remove("hidden")
     }
 
-    function showModal(title, html) {
+    function showModal(title, body) {
       document.getElementById("modalContent").innerHTML = `
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between mb-6">
           <h3 class="text-2xl font-semibold">${title}</h3>
-          <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fa fa-times text-2xl"></i></button>
+          <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
         </div>
-        ${html}
+        ${body}
       `
       document.getElementById("modal").classList.remove("hidden")
     }
@@ -137,37 +131,83 @@
       const area = document.getElementById("contentArea")
 
       if (page === "dashboard") {
-        // Dashboard giữ nguyên như trước (có chart, KPI, alert)
-        area.innerHTML = `...` // (giữ code dashboard cũ của bạn, hoặc copy từ phiên bản trước)
-        // Để ngắn gọn, tôi giữ placeholder – bạn có thể paste lại phần dashboard từ code cũ
+        area.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-gradient-to-br from-cyan-500 to-blue-600 p-8 rounded-3xl text-white">
+              <p class="opacity-75">Tàu đang làm hàng</p>
+              <p class="text-6xl font-bold mt-4">7</p>
+            </div>
+            <div class="bg-white/5 p-8 rounded-3xl">
+              <p>Container trong bãi</p>
+              <p id="totalContainer" class="text-6xl font-bold mt-4">12,845</p>
+            </div>
+            <div class="bg-white/5 p-8 rounded-3xl">
+              <p>Tỷ lệ chiếm bãi</p>
+              <p class="text-6xl font-bold mt-4 text-emerald-400">68%</p>
+            </div>
+            <div class="bg-white/5 p-8 rounded-3xl">
+              <p>Hiệu suất hôm nay</p>
+              <p class="text-6xl font-bold mt-4">92%</p>
+            </div>
+          </div>
+          <div class="mt-10">
+            <canvas id="activityChart" class="h-80 bg-gray-900 rounded-3xl p-6"></canvas>
+          </div>
+        `
+        setTimeout(() => {
+          new Chart(document.getElementById("activityChart"), {
+            type: 'line',
+            data: { labels: ['06h','09h','12h','15h','18h'], datasets: [{ label: 'Moves', data: [120, 210, 340, 280, 190], borderColor: '#22d3ee' }] }
+          })
+        }, 300)
+      } 
+      else if (page === "ship") {
+        area.innerHTML = `
+          <div class="bg-white/5 rounded-3xl p-8">
+            <h3 class="text-2xl mb-6">Danh sách Tàu & Manifest (FR03-FR04)</h3>
+            <table class="w-full text-sm">
+              <thead><tr class="border-b"><th class="py-4 text-left">Tên tàu</th><th>ETA</th><th>ETD</th><th>Hãng</th><th>Trạng thái</th><th></th></tr></thead>
+              <tbody id="shipBody"></tbody>
+            </table>
+          </div>
+        `
+        document.getElementById("shipBody").innerHTML = `
+          <tr class="border-b hover:bg-white/5"><td class="py-5">MV Ocean Star</td><td>05/04 14:30</td><td>06/04 08:00</td><td>Maersk</td><td class="text-emerald-400">Đang dỡ</td><td><button onclick="alert('Xem manifest')" class="text-cyan-400">Manifest</button></td></tr>
+          <tr class="border-b hover:bg-white/5"><td class="py-5">MV Pacific Queen</td><td>05/04 18:45</td><td>07/04 06:00</td><td>MSC</td><td class="text-amber-400">Sẵn sàng</td><td><button onclick="alert('Xem manifest')" class="text-cyan-400">Manifest</button></td></tr>
+        `
       } 
       else if (page === "container") {
         area.innerHTML = `
           <div class="bg-white/5 rounded-3xl p-8">
-            <div class="flex justify-between mb-6">
-              <h3 class="text-2xl font-semibold">Danh sách Container (FR05)</h3>
-              <button onclick="addContainer()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-2xl flex items-center gap-2"><i class="fa fa-plus"></i> Thêm Container</button>
-            </div>
-            <input type="text" id="containerSearch" placeholder="Tìm theo mã container..." class="w-full mb-6 px-5 py-3 bg-gray-800 rounded-2xl" onkeyup="filterContainer()">
-            <table class="w-full text-sm" id="containerTable">
-              <thead><tr class="border-b border-gray-700"><th class="py-4 text-left">Mã</th><th>Loại</th><th>Kích thước</th><th>Tình trạng</th><th>Vị trí</th><th>Hành động</th></tr></thead>
-              <tbody></tbody>
-            </table>
+            <div class="flex justify-between mb-6"><h3 class="text-2xl">Quản lý Container (FR05)</h3><button onclick="addContainer()" class="px-6 py-3 bg-cyan-500 rounded-2xl">+ Thêm</button></div>
+            <table class="w-full text-sm" id="containerTable"><thead><tr class="border-b"><th class="py-4 text-left">Mã</th><th>Loại</th><th>Kích thước</th><th>Tình trạng</th><th>Vị trí</th><th></th></tr></thead><tbody></tbody></table>
           </div>
         `
         renderContainerTable()
       } 
+      else if (page === "yard") {
+        area.innerHTML = `
+          <div>
+            <h3 class="text-2xl mb-6">Bản đồ Bãi Container (FR06-FR07)</h3>
+            <div id="yardMap" class="yard-grid bg-gray-900 p-8 rounded-3xl"></div>
+          </div>
+        `
+        renderYardMap()
+      } 
+      else if (page === "gate") {
+        area.innerHTML = `
+          <div class="max-w-xl mx-auto bg-white/5 rounded-3xl p-10">
+            <h3 class="text-2xl text-center mb-8">Cổng Gate In/Out (FR08)</h3>
+            <button onclick="simulateGateIn()" class="w-full py-6 bg-emerald-600 hover:bg-emerald-700 rounded-3xl text-xl">Gate In - Xe vào cảng</button>
+            <div id="gateLog" class="mt-10 space-y-4"></div>
+          </div>
+        `
+      } 
       else if (page === "vehicle") {
         area.innerHTML = `
           <div class="bg-white/5 rounded-3xl p-8">
-            <div class="flex justify-between mb-6">
-              <h3 class="text-2xl font-semibold">Phương tiện Vận tải (FR09)</h3>
-              <button onclick="addVehicle()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-2xl flex items-center gap-2"><i class="fa fa-plus"></i> Thêm Xe</button>
-            </div>
-            <table class="w-full text-sm" id="vehicleTable">
-              <thead><tr class="border-b border-gray-700"><th class="py-4 text-left">BKS</th><th>Tài xế</th><th>Đơn vị</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
-              <tbody></tbody>
-            </table>
+            <div class="flex justify-between mb-6"><h3 class="text-2xl">Phương tiện Vận tải (FR09)</h3><button onclick="addVehicle()" class="px-6 py-3 bg-cyan-500 rounded-2xl">+ Thêm xe</button></div>
+            <table class="w-full text-sm" id="vehicleTable"><thead><tr class="border-b"><th class="py-4 text-left">BKS</th><th>Tài xế</th><th>Đơn vị</th><th>Trạng thái</th><th></th></tr></thead><tbody></tbody></table>
           </div>
         `
         renderVehicleTable()
@@ -175,11 +215,8 @@
       else if (page === "equipment") {
         area.innerHTML = `
           <div class="bg-white/5 rounded-3xl p-8">
-            <h3 class="text-2xl font-semibold mb-6">Thiết bị Xếp dỡ (FR10)</h3>
-            <table class="w-full text-sm" id="equipmentTable">
-              <thead><tr class="border-b border-gray-700"><th class="py-4 text-left">Thiết bị</th><th>Loại</th><th>Trạng thái</th><th>Hiệu suất (moves/giờ)</th><th>Hành động</th></tr></thead>
-              <tbody></tbody>
-            </table>
+            <h3 class="text-2xl mb-6">Thiết bị Xếp dỡ (FR10)</h3>
+            <table class="w-full text-sm" id="equipmentTable"><thead><tr class="border-b"><th class="py-4 text-left">Mã thiết bị</th><th>Loại</th><th>Trạng thái</th><th>Hiệu suất</th><th></th></tr></thead><tbody></tbody></table>
           </div>
         `
         renderEquipmentTable()
@@ -187,26 +224,29 @@
       else if (page === "planning") {
         area.innerHTML = `
           <div class="bg-white/5 rounded-3xl p-8">
-            <div class="flex justify-between mb-6">
-              <h3 class="text-2xl font-semibold">Phân công & Điều độ (FR11)</h3>
-              <button onclick="addTask()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-2xl flex items-center gap-2"><i class="fa fa-plus"></i> Phân công mới</button>
-            </div>
-            <table class="w-full text-sm" id="planningTable">
-              <thead><tr class="border-b border-gray-700"><th class="py-4 text-left">Nhiệm vụ</th><th>Thiết bị</th><th>Nhân sự</th><th>Tiến độ</th><th>Hành động</th></tr></thead>
-              <tbody></tbody>
-            </table>
+            <div class="flex justify-between mb-6"><h3 class="text-2xl">Phân công & Điều độ (FR11)</h3><button onclick="addTask()" class="px-6 py-3 bg-cyan-500 rounded-2xl">+ Phân công mới</button></div>
+            <table class="w-full text-sm" id="planningTable"><thead><tr class="border-b"><th class="py-4 text-left">Nhiệm vụ</th><th>Thiết bị</th><th>Nhân sự</th><th>Tiến độ</th><th></th></tr></thead><tbody></tbody></table>
           </div>
         `
         renderPlanningTable()
       } 
+      else if (page === "report") {
+        area.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white/5 p-8 rounded-3xl"><canvas id="reportChart" class="h-96"></canvas></div>
+            <div class="bg-white/5 p-8 rounded-3xl">
+              <h3 class="text-xl mb-6">Thống kê chính (FR13)</h3>
+              <ul class="space-y-6"><li class="flex justify-between"><span>Sản lượng tháng</span><span class="font-bold">45,872 TEU</span></li><li class="flex justify-between"><span>Bãi sử dụng</span><span class="font-bold text-emerald-400">68%</span></li></ul>
+            </div>
+          </div>
+        `
+        setTimeout(() => new Chart(document.getElementById("reportChart"), {type:'bar', data:{labels:['T2','T3','T4','T5'], datasets:[{label:'Sản lượng', data:[1240,1890,1650,2100], backgroundColor:'#22d3ee'}]}} ), 100)
+      } 
       else if (page === "search") {
         area.innerHTML = `
           <div class="max-w-2xl mx-auto bg-white/5 rounded-3xl p-10">
-            <h3 class="text-2xl font-semibold mb-6 text-center">Tra cứu Thông tin (FR14)</h3>
-            <div class="flex gap-3">
-              <input id="globalSearch" type="text" placeholder="Nhập mã container, tàu, xe..." class="flex-1 px-6 py-4 bg-gray-800 rounded-2xl">
-              <button onclick="performSearch()" class="px-8 bg-cyan-500 hover:bg-cyan-600 rounded-2xl">Tìm kiếm</button>
-            </div>
+            <h3 class="text-2xl mb-6 text-center">Tra cứu Thông tin (FR14)</h3>
+            <div class="flex"><input id="searchInput" class="flex-1 px-6 py-4 bg-gray-800 rounded-l-2xl" placeholder="Mã container / tàu / xe..."><button onclick="performSearch()" class="px-8 bg-cyan-500 rounded-r-2xl">Tìm</button></div>
             <div id="searchResult" class="mt-10"></div>
           </div>
         `
@@ -214,147 +254,87 @@
       else if (page === "user") {
         area.innerHTML = `
           <div class="bg-white/5 rounded-3xl p-8">
-            <div class="flex justify-between mb-6">
-              <h3 class="text-2xl font-semibold">Quản lý Người dùng (FR02)</h3>
-              <button onclick="addUser()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-2xl flex items-center gap-2"><i class="fa fa-plus"></i> Thêm Người dùng</button>
-            </div>
-            <table class="w-full text-sm" id="userTable">
-              <thead><tr class="border-b border-gray-700"><th class="py-4 text-left">Tên</th><th>Vai trò</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
-              <tbody></tbody>
-            </table>
+            <div class="flex justify-between mb-6"><h3 class="text-2xl">Quản lý Người dùng (FR02)</h3><button onclick="addUser()" class="px-6 py-3 bg-cyan-500 rounded-2xl">+ Thêm người dùng</button></div>
+            <table class="w-full text-sm" id="userTable"><thead><tr class="border-b"><th class="py-4 text-left">Họ tên</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead><tbody></tbody></table>
           </div>
         `
         renderUserTable()
-      } 
-      else {
-        // Các trang đã có (ship, yard, gate, report) giữ nguyên từ code trước
-        // Bạn có thể copy-paste lại phần tương ứng từ phiên bản cũ
       }
     }
 
-    // === MOCK DATA & RENDER FUNCTIONS ===
-
+    // Render functions cho từng trang
     function renderContainerTable() {
       const tbody = document.querySelector("#containerTable tbody")
-      const data = [
-        ["ABCD1234567", "Dry", "20ft", "Đầy", "Block A-12-05-03", "Chi tiết"],
-        ["EFGH9876543", "Reefer", "40ft", "Lạnh", "Block B-08-02-04", "Chi tiết"],
-        ["IJKL4567890", "Hazard", "20ft", "Nguy hiểm", "Block C-15-01-02", "Chi tiết"]
-      ]
-      tbody.innerHTML = data.map(row => `
-        <tr class="border-b border-gray-700 hover:bg-white/5">
-          <td class="py-5">${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>
-          <td><span class="px-4 py-1 text-xs rounded-full ${row[3]==='Lạnh'?'bg-cyan-900 text-cyan-300':row[3]==='Nguy hiểm'?'bg-red-900 text-red-300':'bg-emerald-900 text-emerald-300'}">${row[3]}</span></td>
-          <td>${row[4]}</td>
-          <td><button onclick="viewContainerDetail('${row[0]}')" class="text-cyan-400 hover:underline">${row[5]}</button></td>
-        </tr>
-      `).join('')
+      tbody.innerHTML = `
+        <tr class="border-b hover:bg-white/5"><td class="py-5">ABCD1234567</td><td>Dry</td><td>20ft</td><td class="text-emerald-400">Đầy</td><td>Block A-12-5-3</td><td><button onclick="viewDetail('ABCD1234567')" class="text-cyan-400">Chi tiết</button></td></tr>
+        <tr class="border-b hover:bg-white/5"><td class="py-5">EFGH9876543</td><td>Reefer</td><td>40ft</td><td class="text-cyan-400">Lạnh</td><td>Block B-08-2-4</td><td><button onclick="viewDetail('EFGH9876543')" class="text-cyan-400">Chi tiết</button></td></tr>
+      `
     }
 
-    function addContainer() {
-      showModal("Thêm Container Mới", `
-        <form onsubmit="event.preventDefault(); alert('Container đã được thêm!'); closeModal();" class="space-y-5">
-          <input type="text" placeholder="Mã container" class="w-full px-5 py-3 bg-gray-800 rounded-2xl" required>
-          <select class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><option>Dry</option><option>Reefer</option><option>Hazard</option></select>
-          <input type="text" placeholder="Kích thước (20ft/40ft)" class="w-full px-5 py-3 bg-gray-800 rounded-2xl">
-          <button type="submit" class="w-full py-4 bg-emerald-600 rounded-2xl font-semibold">Lưu Container</button>
-        </form>
-      `)
-    }
-
-    function viewContainerDetail(code) {
-      alert(`Chi tiết Container ${code}\nVị trí: Block A\nTình trạng: Đầy\nLịch sử di chuyển: ... (FR05)`)
+    function renderYardMap() {
+      const map = document.getElementById("yardMap")
+      let html = ''
+      const colors = ['emerald','amber','red','cyan']
+      for (let i = 0; i < 80; i++) {
+        const c = colors[Math.floor(Math.random()*4)]
+        html += `<div onclick="viewYardDetail(${1000+i})" class="container-box bg-${c}-400 h-12 flex items-center justify-center text-xs font-bold text-gray-900 rounded-2xl cursor-pointer">${1000+i}</div>`
+      }
+      map.innerHTML = html
     }
 
     function renderVehicleTable() {
       const tbody = document.querySelector("#vehicleTable tbody")
-      const data = [
-        ["51H-12345", "Trần Văn B", "Công ty ABC", "Sẵn sàng", "Xem"],
-        ["51H-67890", "Lê Thị C", "Công ty XYZ", "Đang vận chuyển", "Xem"]
-      ]
-      tbody.innerHTML = data.map(row => `
-        <tr class="border-b border-gray-700 hover:bg-white/5"><td class="py-5">${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><span class="px-4 py-1 text-xs rounded-full bg-emerald-900 text-emerald-300">${row[3]}</span></td><td><button onclick="alert('Chi tiết xe ${row[0]}')" class="text-cyan-400">${row[4]}</button></td></tr>
-      `).join('')
-    }
-
-    function addVehicle() {
-      showModal("Thêm Phương tiện", `<form onsubmit="event.preventDefault();alert('Xe đã thêm!');closeModal()" class="space-y-5">... (các trường BKS, Tài xế, Đơn vị)</form>`)
+      tbody.innerHTML = `
+        <tr class="border-b hover:bg-white/5"><td class="py-5">51H-12345</td><td>Trần Văn B</td><td>Công ty ABC</td><td class="text-emerald-400">Sẵn sàng</td><td><button class="text-cyan-400">Chi tiết</button></td></tr>
+      `
     }
 
     function renderEquipmentTable() {
       const tbody = document.querySelector("#equipmentTable tbody")
-      const data = [
-        ["QC-01", "Quay Crane", "Hoạt động", "45", "Theo dõi"],
-        ["RTG-03", "Rubber Tyre Gantry", "Bảo dưỡng", "12", "Theo dõi"]
-      ]
-      tbody.innerHTML = data.map(row => `
-        <tr class="border-b border-gray-700 hover:bg-white/5"><td class="py-5">${row[0]}</td><td>${row[1]}</td><td><span class="px-4 py-1 text-xs rounded-full ${row[2]==='Hoạt động'?'bg-emerald-900 text-emerald-300':'bg-amber-900 text-amber-300'}">${row[2]}</span></td><td>${row[3]}</td><td><button class="text-cyan-400">${row[4]}</button></td></tr>
-      `).join('')
+      tbody.innerHTML = `
+        <tr class="border-b hover:bg-white/5"><td class="py-5">QC-01</td><td>Quay Crane</td><td class="text-emerald-400">Hoạt động</td><td>45 moves/giờ</td><td><button class="text-cyan-400">Theo dõi</button></td></tr>
+      `
     }
 
     function renderPlanningTable() {
       const tbody = document.querySelector("#planningTable tbody")
-      const data = [
-        ["Xếp dỡ tàu Ocean Star", "QC-01", "Đội 1", "75%", "Cập nhật"],
-        ["Di chuyển container đến bãi", "RTG-03", "Đội 2", "40%", "Cập nhật"]
-      ]
-      tbody.innerHTML = data.map(row => `
-        <tr class="border-b border-gray-700 hover:bg-white/5"><td class="py-5">${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><div class="w-full bg-gray-700 h-2 rounded"><div class="bg-cyan-400 h-2 rounded" style="width:${row[3]}"></div></div> ${row[3]}</td><td><button class="text-cyan-400">${row[4]}</button></td></tr>
-      `).join('')
-    }
-
-    function addTask() {
-      showModal("Phân công Nhiệm vụ Mới", `<form ...>Chọn thiết bị, nhân sự, nhiệm vụ...</form>`)
+      tbody.innerHTML = `
+        <tr class="border-b hover:bg-white/5"><td class="py-5">Xếp dỡ MV Ocean Star</td><td>QC-01</td><td>Đội 1</td><td><div class="bg-gray-700 h-2 rounded"><div class="bg-cyan-400 h-2 rounded w-3/4"></div></div> 75%</td><td><button class="text-cyan-400">Cập nhật</button></td></tr>
+      `
     }
 
     function renderUserTable() {
       const tbody = document.querySelector("#userTable tbody")
-      const data = [
-        ["Nguyễn Văn A", "Quản trị viên", "Hoạt động", "Chỉnh sửa"],
-        ["Trần Thị B", "Nhân viên bãi", "Hoạt động", "Chỉnh sửa"],
-        ["Lê Văn C", "Điều độ", "Khóa", "Mở khóa"]
-      ]
-      tbody.innerHTML = data.map(row => `
-        <tr class="border-b border-gray-700 hover:bg-white/5"><td class="py-5">${row[0]}</td><td>${row[1]}</td><td><span class="px-4 py-1 text-xs rounded-full ${row[2]==='Hoạt động'?'bg-emerald-900 text-emerald-300':'bg-red-900 text-red-300'}">${row[2]}</span></td><td><button onclick="alert('Chỉnh sửa người dùng ${row[0]}')" class="text-cyan-400">${row[3]}</button></td></tr>
-      `).join('')
-    }
-
-    function addUser() {
-      showModal("Thêm Người dùng Mới", `
-        <form onsubmit="event.preventDefault();alert('Người dùng đã được tạo!');closeModal()" class="space-y-5">
-          <input type="text" placeholder="Họ tên" class="w-full px-5 py-3 bg-gray-800 rounded-2xl">
-          <select class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><option>Quản trị viên</option><option>Điều độ</option><option>Nhân viên bãi</option><option>Nhân viên cổng</option></select>
-          <button type="submit" class="w-full py-4 bg-emerald-600 rounded-2xl font-semibold">Tạo tài khoản</button>
-        </form>
-      `)
-    }
-
-    function performSearch() {
-      const query = document.getElementById("globalSearch").value
-      if (!query) return
-      document.getElementById("searchResult").innerHTML = `
-        <div class="bg-gray-900 p-8 rounded-3xl">
-          <p class="text-emerald-400">Kết quả cho: <strong>${query}</strong></p>
-          <p class="mt-6">Container ABCD1234567 - Vị trí: Block A • Trạng thái: Đầy</p>
-          <p class="mt-2">Tàu MV Ocean Star - ETA: 14:30</p>
-          <p class="mt-2">Xe 51H-12345 - Tài xế: Trần Văn B</p>
-        </div>
+      tbody.innerHTML = `
+        <tr class="border-b hover:bg-white/5"><td class="py-5">Nguyễn Văn A</td><td>Quản trị viên</td><td class="text-emerald-400">Hoạt động</td><td><button class="text-cyan-400">Chỉnh sửa</button></td></tr>
       `
     }
 
-    function filterContainer() {
-      // Có thể thêm logic filter thực tế nếu cần
-      console.log("Filtering...")
+    function addContainer() { showModal("Thêm Container", `<form onsubmit="event.preventDefault();alert('Đã thêm container!');closeModal()" class="space-y-4"><input placeholder="Mã container" class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><select class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><option>Dry</option><option>Reefer</option></select><button type="submit" class="w-full py-4 bg-emerald-600 rounded-2xl">Lưu</button></form>`) }
+    function addVehicle() { showModal("Thêm Phương tiện", `<form ...>BKS, Tài xế...</form>`) }
+    function addTask() { showModal("Phân công mới", `<form ...>Nhiệm vụ, Thiết bị...</form>`) }
+    function addUser() { showModal("Thêm Người dùng", `<form onsubmit="event.preventDefault();alert('Tài khoản đã tạo!');closeModal()" class="space-y-4"><input placeholder="Họ tên" class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><select class="w-full px-5 py-3 bg-gray-800 rounded-2xl"><option>Nhân viên bãi</option><option>Điều độ</option></select><button type="submit" class="w-full py-4 bg-emerald-600 rounded-2xl">Tạo</button></form>`) }
+
+    function viewDetail(code) { alert(`Chi tiết Container ${code}\nTrạng thái: Đầy\nVị trí hiện tại: Block A\nLịch sử: ...`) }
+    function viewYardDetail(num) { alert(`Container ${num}\nBlock A - Bay 12 - Row 5 - Tier 3\nTình trạng: Đầy`) }
+
+    function simulateGateIn() {
+      const log = document.getElementById("gateLog")
+      log.innerHTML = `<div class="bg-emerald-900/30 p-5 rounded-2xl">Xe BKS 51H-12345 - Container ABCD1234567 đã Gate In lúc ${new Date().toLocaleTimeString('vi-VN')}</div>` + (log.innerHTML || '')
+    }
+
+    function performSearch() {
+      const q = document.getElementById("searchInput").value || "ABCD1234567"
+      document.getElementById("searchResult").innerHTML = `<div class="bg-gray-900 p-8 rounded-3xl">Kết quả cho <strong>${q}</strong><br><br>Container ABCD1234567 - Vị trí Block A<br>Tàu MV Ocean Star - ETA 14:30</div>`
     }
 
     function startRealTime() {
       setInterval(() => {
         const bar = document.getElementById("realTimeBar")
-        if (bar) bar.innerHTML = `<div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div><span>${Math.floor(Math.random()*400)+150} container đang di chuyển • ${Math.floor(Math.random()*8)+3} tàu đang làm hàng</span>`
-      }, 5000)
+        if (bar) bar.innerHTML = `<span class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span> ${Math.floor(Math.random()*300)+180} container đang di chuyển • ${Math.floor(Math.random()*6)+4} tàu đang làm hàng`
+      }, 4500)
     }
 
-    // Khởi chạy
     window.onload = () => {}
   </script>
 </body>
