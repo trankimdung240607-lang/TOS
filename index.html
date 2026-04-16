@@ -9,11 +9,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; }
-    .yard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
-    .container-box { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .container-box:hover { transform: scale(1.1); box-shadow: 0 0 20px rgb(16 185 129); }
+    .yard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+    .container-box { transition: all 0.3s; }
+    .container-box:hover { transform: scale(1.08); box-shadow: 0 0 15px rgb(16 185 129); }
     .modal { animation: modalPop 0.3s ease; }
-    .tab-active { border-bottom: 3px solid #10b981; color: #10b981; }
     @keyframes modalPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
@@ -21,22 +20,22 @@
 
   <!-- LOGIN -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-700 to-teal-700">
-    <div class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md">
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
       <div class="text-center mb-10">
         <i class="fa fa-ship text-7xl text-emerald-600 mb-6"></i>
         <h1 class="text-4xl font-bold text-gray-800">TOS Cảng Container</h1>
-        <p class="text-emerald-600 mt-2">Terminal Operating System v2.4</p>
+        <p class="text-emerald-600 mt-2">Terminal Operating System v2.5</p>
       </div>
-      <input id="username" type="text" value="admin" class="w-full px-6 py-4 border border-gray-300 rounded-2xl mb-4 focus:border-emerald-500 focus:outline-none">
-      <input id="password" type="password" value="123456" class="w-full px-6 py-4 border border-gray-300 rounded-2xl mb-6 focus:border-emerald-500 focus:outline-none">
-      <button onclick="login()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-lg transition">ĐĂNG NHẬP</button>
+      <input id="username" type="text" value="admin" class="w-full px-6 py-4 border border-gray-300 rounded-2xl mb-4 focus:border-emerald-500">
+      <input id="password" type="password" value="123456" class="w-full px-6 py-4 border border-gray-300 rounded-2xl mb-6 focus:border-emerald-500">
+      <button onclick="login()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-lg">ĐĂNG NHẬP</button>
     </div>
   </div>
 
   <!-- MAIN APP -->
   <div id="mainApp" class="hidden flex min-h-screen">
-    <!-- SIDEBAR - Light theme -->
-    <div class="w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+    <!-- SIDEBAR -->
+    <div class="w-72 bg-white border-r border-gray-200 flex flex-col">
       <div class="p-6 border-b border-gray-200 flex items-center gap-4">
         <i class="fa fa-ship text-4xl text-emerald-600"></i>
         <div>
@@ -49,8 +48,8 @@
         <div class="flex items-center gap-3 bg-emerald-50 p-4 rounded-3xl">
           <i class="fa fa-user-circle text-4xl text-emerald-600"></i>
           <div class="flex-1">
-            <p id="userName" class="font-medium text-gray-800">Nguyễn Văn A</p>
-            <p id="currentRole" class="text-xs text-emerald-600">Quản trị viên</p>
+            <p id="userName" class="font-medium">Nguyễn Văn A</p>
+            <p id="currentRole" class="text-emerald-600">Quản trị viên</p>
           </div>
           <button onclick="logout()" class="text-red-500 hover:text-red-600"><i class="fa fa-sign-out-alt"></i></button>
         </div>
@@ -69,7 +68,7 @@
 
   <!-- MODAL -->
   <div id="modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div id="modalContent" class="bg-white w-full max-w-2xl rounded-3xl p-8 modal shadow-2xl"></div>
+    <div id="modalContent" class="bg-white w-full max-w-2xl rounded-3xl p-8 modal shadow-2xl max-h-[90vh] overflow-auto"></div>
   </div>
 
   <script>
@@ -112,13 +111,13 @@
       document.getElementById("loginScreen").classList.remove("hidden")
     }
 
-    function showModal(title, body) {
+    function showModal(title, html) {
       document.getElementById("modalContent").innerHTML = `
-        <div class="flex justify-between mb-6">
-          <h3 class="text-2xl font-semibold">${title}</h3>
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+          <h3 class="text-2xl font-semibold text-gray-800">${title}</h3>
           <button onclick="closeModal()" class="text-3xl text-gray-400 hover:text-gray-600">×</button>
         </div>
-        ${body}
+        ${html}
       `
       document.getElementById("modal").classList.remove("hidden")
     }
@@ -127,7 +126,6 @@
       document.getElementById("modal").classList.add("hidden")
     }
 
-    // === GIỮ NGUYÊN NỘI DUNG CŨ CỦA TẤT CẢ CÁC TRANG ===
     function switchPage(page) {
       document.getElementById("pageTitle").textContent = menuItems.find(m => m.id === page).name
       const area = document.getElementById("contentArea")
@@ -135,19 +133,19 @@
       if (page === "dashboard") {
         area.innerHTML = `
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-8 rounded-3xl shadow border border-gray-100">
+            <div class="bg-white p-8 rounded-3xl shadow">
               <p class="text-gray-500">Tàu đang làm hàng</p>
               <p class="text-6xl font-bold text-emerald-600 mt-4">7</p>
             </div>
-            <div class="bg-white p-8 rounded-3xl shadow border border-gray-100">
+            <div class="bg-white p-8 rounded-3xl shadow">
               <p class="text-gray-500">Container trong bãi</p>
               <p id="totalContainer" class="text-6xl font-bold mt-4">12,845</p>
             </div>
-            <div class="bg-white p-8 rounded-3xl shadow border border-gray-100">
+            <div class="bg-white p-8 rounded-3xl shadow">
               <p class="text-gray-500">Tỷ lệ chiếm bãi</p>
               <p class="text-6xl font-bold mt-4 text-emerald-600">68%</p>
             </div>
-            <div class="bg-white p-8 rounded-3xl shadow border border-gray-100">
+            <div class="bg-white p-8 rounded-3xl shadow">
               <p class="text-gray-500">Hiệu suất hôm nay</p>
               <p class="text-6xl font-bold mt-4">92%</p>
             </div>
@@ -156,14 +154,34 @@
             <canvas id="activityChart" class="h-80"></canvas>
           </div>
         `
-        setTimeout(() => new Chart(document.getElementById("activityChart"), {type: 'line', data: {labels: ['06h','09h','12h','15h','18h'], datasets: [{label: 'Moves', data: [120,210,340,280,190], borderColor: '#10b981'}]}}), 300)
+        setTimeout(() => {
+          new Chart(document.getElementById("activityChart"), {
+            type: 'line',
+            data: { labels: ['06:00','09:00','12:00','15:00','18:00'], datasets: [{ label: 'Moves/giờ', data: [89,145,210,178,132], borderColor: '#10b981', tension: 0.4 }] }
+          })
+        }, 300)
+      } 
+      else if (page === "ship") {
+        area.innerHTML = `
+          <div class="bg-white rounded-3xl shadow p-8">
+            <h3 class="text-2xl font-semibold mb-6">Quản lý Tàu & Manifest (FR03-FR04)</h3>
+            <table class="w-full text-sm">
+              <thead><tr class="border-b"><th class="py-4 text-left">Tên tàu</th><th>ETA</th><th>ETD</th><th>Hãng tàu</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+              <tbody id="shipBody"></tbody>
+            </table>
+          </div>
+        `
+        document.getElementById("shipBody").innerHTML = `
+          <tr class="border-b hover:bg-emerald-50"><td class="py-5">MV Ocean Star</td><td>05/04 14:30</td><td>06/04 08:00</td><td>Maersk</td><td class="text-emerald-600">Đang dỡ hàng</td><td><button class="text-emerald-600">Xem Manifest</button></td></tr>
+          <tr class="border-b hover:bg-emerald-50"><td class="py-5">MV Pacific Queen</td><td>05/04 18:45</td><td>07/04 06:00</td><td>MSC</td><td class="text-amber-600">Sẵn sàng</td><td><button class="text-emerald-600">Xem Manifest</button></td></tr>
+        `
       } 
       else if (page === "container") {
         area.innerHTML = `
           <div class="bg-white rounded-3xl shadow p-8">
             <div class="flex justify-between mb-6">
               <h3 class="text-2xl font-semibold">Quản lý Container (FR05)</h3>
-              <button onclick="addContainer()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl flex items-center gap-2">+ Thêm Container</button>
+              <button onclick="addContainer()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl flex items-center gap-2"><i class="fa fa-plus"></i> Thêm Container</button>
             </div>
             <table class="w-full text-sm" id="containerTable">
               <thead><tr class="border-b"><th class="py-4 text-left">Mã</th><th>Loại</th><th>Kích thước</th><th>Tình trạng</th><th>Vị trí</th><th>Hành động</th></tr></thead>
@@ -186,23 +204,74 @@
         area.innerHTML = `
           <div class="max-w-xl mx-auto bg-white rounded-3xl shadow p-10">
             <h3 class="text-2xl text-center mb-8">Cổng Gate In/Out (FR08)</h3>
-            <button onclick="simulateGateIn()" class="w-full py-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl text-xl">Gate In - Xe vào cảng</button>
+            <button onclick="simulateGateIn()" class="w-full py-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl text-xl font-medium">Gate In - Xe vào cảng</button>
             <div id="gateLog" class="mt-10 space-y-4"></div>
           </div>
         `
       } 
-      // Các trang khác giữ nguyên nội dung cũ (chỉ thay màu)
-      else {
+      else if (page === "vehicle") {
         area.innerHTML = `
-          <div class="bg-white rounded-3xl shadow p-12 text-center">
-            <i class="fa ${menuItems.find(m => m.id === page).icon} text-8xl text-emerald-200 mb-8"></i>
-            <h2 class="text-4xl font-semibold">${menuItems.find(m => m.id === page).name}</h2>
-            <p class="mt-6 text-gray-600">Nội dung trang đã được giữ nguyên theo yêu cầu của bạn.</p>
+          <div class="bg-white rounded-3xl shadow p-8">
+            <div class="flex justify-between mb-6"><h3 class="text-2xl font-semibold">Phương tiện Vận tải (FR09)</h3><button onclick="addVehicle()" class="px-6 py-3 bg-emerald-600 text-white rounded-2xl">+ Thêm Xe</button></div>
+            <table class="w-full text-sm" id="vehicleTable"><thead><tr class="border-b"><th class="py-4 text-left">BKS</th><th>Tài xế</th><th>Đơn vị</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
           </div>
         `
+        renderVehicleTable()
+      } 
+      else if (page === "equipment") {
+        area.innerHTML = `
+          <div class="bg-white rounded-3xl shadow p-8">
+            <h3 class="text-2xl font-semibold mb-6">Thiết bị Xếp dỡ (FR10)</h3>
+            <table class="w-full text-sm" id="equipmentTable"><thead><tr class="border-b"><th class="py-4 text-left">Thiết bị</th><th>Loại</th><th>Trạng thái</th><th>Hiệu suất</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+          </div>
+        `
+        renderEquipmentTable()
+      } 
+      else if (page === "planning") {
+        area.innerHTML = `
+          <div class="bg-white rounded-3xl shadow p-8">
+            <div class="flex justify-between mb-6"><h3 class="text-2xl font-semibold">Phân công & Điều độ (FR11)</h3><button onclick="addTask()" class="px-6 py-3 bg-emerald-600 text-white rounded-2xl">+ Phân công mới</button></div>
+            <table class="w-full text-sm" id="planningTable"><thead><tr class="border-b"><th class="py-4 text-left">Nhiệm vụ</th><th>Thiết bị</th><th>Nhân sự</th><th>Tiến độ</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+          </div>
+        `
+        renderPlanningTable()
+      } 
+      else if (page === "report") {
+        area.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-3xl shadow"><canvas id="reportChart" class="h-96"></canvas></div>
+            <div class="bg-white p-8 rounded-3xl shadow">
+              <h3 class="text-xl font-semibold mb-6">Thống kê (FR13)</h3>
+              <ul class="space-y-6 text-sm">
+                <li class="flex justify-between"><span>Tổng container tháng này</span><span class="font-bold text-emerald-600">45,872 TEU</span></li>
+                <li class="flex justify-between"><span>Tỷ lệ sử dụng bãi</span><span class="font-bold text-emerald-600">68%</span></li>
+              </ul>
+            </div>
+          </div>
+        `
+        setTimeout(() => new Chart(document.getElementById("reportChart"), {type:'bar', data:{labels:['T2','T3','T4','T5'], datasets:[{label:'Sản lượng', data:[1240,1890,1650,2100], backgroundColor:'#10b981'}]}}), 100)
+      } 
+      else if (page === "search") {
+        area.innerHTML = `
+          <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow p-10">
+            <h3 class="text-2xl font-semibold mb-6">Tra cứu Thông tin (FR14)</h3>
+            <div class="flex gap-3"><input id="searchInput" class="flex-1 px-6 py-4 border border-gray-300 rounded-l-2xl" placeholder="Nhập mã container, tàu..."><button onclick="performSearch()" class="px-8 bg-emerald-600 text-white rounded-r-2xl">Tìm kiếm</button></div>
+            <div id="searchResult" class="mt-10"></div>
+          </div>
+        `
+      } 
+      else if (page === "user") {
+        area.innerHTML = `
+          <div class="bg-white rounded-3xl shadow p-8">
+            <div class="flex justify-between mb-6"><h3 class="text-2xl font-semibold">Quản lý Người dùng (FR02)</h3><button onclick="addUser()" class="px-6 py-3 bg-emerald-600 text-white rounded-2xl">+ Thêm người dùng</button></div>
+            <table class="w-full text-sm" id="userTable"><thead><tr class="border-b"><th class="py-4 text-left">Họ tên</th><th>Vai trò</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+          </div>
+        `
+        renderUserTable()
       }
     }
 
+    // Render dữ liệu cho các trang
     function renderContainerTable() {
       const tbody = document.querySelector("#containerTable tbody")
       tbody.innerHTML = `
@@ -217,35 +286,55 @@
       const colors = ['emerald','teal','amber','red']
       for (let i = 0; i < 80; i++) {
         const c = colors[Math.floor(Math.random()*4)]
-        html += `<div onclick="alert('Container ${1000+i} - Vị trí: Block A')" class="container-box bg-${c}-400 h-12 flex items-center justify-center text-xs font-bold text-white rounded-2xl cursor-pointer">${1000+i}</div>`
+        html += `<div onclick="alert('Container ${1000+i} - Vị trí hiện tại: Block A')" class="container-box bg-${c}-400 h-12 flex items-center justify-center text-xs font-bold text-white rounded-2xl cursor-pointer">${1000+i}</div>`
       }
       map.innerHTML = html
     }
 
-    function addContainer() {
-      showModal("Thêm Container Mới", `
-        <form onsubmit="event.preventDefault(); alert('Container đã được thêm!'); closeModal()" class="space-y-5">
-          <input type="text" placeholder="Mã container" class="w-full px-5 py-4 border border-gray-300 rounded-2xl">
-          <select class="w-full px-5 py-4 border border-gray-300 rounded-2xl"><option>Dry</option><option>Reefer</option></select>
-          <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl">Lưu</button>
-        </form>
-      `)
+    function renderVehicleTable() {
+      const tbody = document.querySelector("#vehicleTable tbody")
+      tbody.innerHTML = `<tr class="border-b hover:bg-emerald-50"><td class="py-5">51H-12345</td><td>Trần Văn B</td><td>Công ty ABC</td><td class="text-emerald-600">Sẵn sàng</td><td><button class="text-emerald-600">Chi tiết</button></td></tr>`
     }
 
+    function renderEquipmentTable() {
+      const tbody = document.querySelector("#equipmentTable tbody")
+      tbody.innerHTML = `<tr class="border-b hover:bg-emerald-50"><td class="py-5">QC-01</td><td>Quay Crane</td><td class="text-emerald-600">Hoạt động</td><td>45 moves/giờ</td><td><button class="text-emerald-600">Theo dõi</button></td></tr>`
+    }
+
+    function renderPlanningTable() {
+      const tbody = document.querySelector("#planningTable tbody")
+      tbody.innerHTML = `<tr class="border-b hover:bg-emerald-50"><td class="py-5">Xếp dỡ tàu Ocean Star</td><td>QC-01</td><td>Đội 1</td><td>75%</td><td><button class="text-emerald-600">Cập nhật</button></td></tr>`
+    }
+
+    function renderUserTable() {
+      const tbody = document.querySelector("#userTable tbody")
+      tbody.innerHTML = `<tr class="border-b hover:bg-emerald-50"><td class="py-5">Nguyễn Văn A</td><td>Quản trị viên</td><td class="text-emerald-600">Hoạt động</td><td><button class="text-emerald-600">Chỉnh sửa</button></td></tr>`
+    }
+
+    function addContainer() { showModal("Thêm Container Mới", `<form onsubmit="event.preventDefault();alert('Đã thêm container!');closeModal()" class="space-y-5"><input type="text" placeholder="Mã container" class="w-full px-5 py-4 border border-gray-300 rounded-2xl"><select class="w-full px-5 py-4 border border-gray-300 rounded-2xl"><option>Dry</option><option>Reefer</option></select><button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl">Lưu</button></form>`) }
+    function addVehicle() { showModal("Thêm Phương tiện", `<p class="text-gray-600">Form thêm xe sẽ được mở rộng sau</p>`) }
+    function addTask() { showModal("Phân công mới", `<p class="text-gray-600">Form phân công nhiệm vụ</p>`) }
+    function addUser() { showModal("Thêm Người dùng", `<form onsubmit="event.preventDefault();alert('Người dùng đã tạo!');closeModal()" class="space-y-5"><input type="text" placeholder="Họ tên" class="w-full px-5 py-4 border border-gray-300 rounded-2xl"><button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl">Tạo tài khoản</button></form>`) }
+
     function viewContainerDetail(code) {
-      showModal(`Chi tiết Container ${code}`, `<p class="text-lg">Thông tin chi tiết container đã được giữ nguyên.</p>`)
+      showModal(`Chi tiết Container: ${code}`, `<p class="text-lg">Mã: ${code}<br>Loại: Dry<br>Vị trí: Block A-12-05-03<br>Trạng thái: Đầy hàng</p>`)
     }
 
     function simulateGateIn() {
       const log = document.getElementById("gateLog")
-      if (log) log.innerHTML = `<div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">Xe BKS 51H-12345 đã Gate In thành công lúc ${new Date().toLocaleTimeString('vi-VN')}</div>` + log.innerHTML
+      if (log) log.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-5 rounded-2xl">Xe BKS 51H-12345 - Container ABCD1234567 đã Gate In thành công (${new Date().toLocaleTimeString('vi-VN')})</div>` + (log.innerHTML || '')
+    }
+
+    function performSearch() {
+      const q = document.getElementById("searchInput").value || "ABCD1234567"
+      document.getElementById("searchResult").innerHTML = `<div class="bg-emerald-50 p-8 rounded-3xl">Kết quả tìm kiếm cho: <strong>${q}</strong><br><br>Container ABCD1234567 - Vị trí Block A</div>`
     }
 
     function startRealTime() {
       setInterval(() => {
         const bar = document.getElementById("realTimeBar")
-        if (bar) bar.innerHTML = `<span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span> ${Math.floor(Math.random()*400)+150} container đang di chuyển`
-      }, 4500)
+        if (bar) bar.innerHTML = `<span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span> ${Math.floor(Math.random()*400)+180} container đang di chuyển`
+      }, 4000)
     }
 
     window.onload = () => {}
